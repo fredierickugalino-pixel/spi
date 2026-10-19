@@ -1,10 +1,3 @@
 <?php
-
-$servername = "localhost";
-$root = "root";
-$password = "";
-$database = "ewan";
-
-$conn = new mysqli($servername, $root, $password, $database);
-
-?>
+// Backwards-compatible include; new code should include config/database.php.
+require_once __DIR__ . '/config/database.php';
