@@ -6,6 +6,10 @@ if (!empty($_SESSION['login_error'])) {
     $loginError=$_SESSION['login_error']; unset($_SESSION['login_error']);
     echo '<dialog class="login-alert" id="login-alert" aria-labelledby="login-alert-title" aria-describedby="login-alert-message"><span class="alert-mark" aria-hidden="true">!</span><h2 id="login-alert-title">Sign-in failed</h2><p id="login-alert-message">'.e($loginError).'</p><button class="submit-button" type="button" autofocus onclick="document.getElementById(\'login-alert\').close()">Try again</button></dialog><script>document.getElementById("login-alert").showModal();</script>';
 }
+if (!empty($_SESSION['password_changed_notice'])) {
+    $passwordChangedNotice=$_SESSION['password_changed_notice']; unset($_SESSION['password_changed_notice']);
+    echo '<dialog class="login-alert" id="password-changed-alert" aria-labelledby="password-changed-title" aria-describedby="password-changed-message"><span class="alert-mark" aria-hidden="true">✓</span><h2 id="password-changed-title">Password changed</h2><p id="password-changed-message">'.e($passwordChangedNotice).'</p><button class="submit-button" type="button" autofocus onclick="document.getElementById(\'password-changed-alert\').close()">Continue</button></dialog><script>document.getElementById("password-changed-alert").showModal();</script>';
+}
 ?>
 <section class="auth card login-card">
     <header class="login-heading">

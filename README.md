@@ -5,12 +5,13 @@ PHP 8+ / MySQL 8 (or compatible MariaDB) starter implementation for XAMPP. All p
 ## Install in XAMPP
 
 1. Place this folder at `C:\xampp\htdocs\spi` and start Apache and MySQL.
-2. In phpMyAdmin, import `database/spi_grading_system.sql`. It creates the `spi_grading_system` database and tables.
-3. If your MySQL root password is not blank, configure the four `SPI_DB_*` environment values for Apache/PHP, or update `config/database.php` for local development. Never use a privileged root account in production.
-4. Create the first administrator from a terminal in this folder: `php database/create-admin.php`. Use a unique 12+ character password. The script reads a password on standard input; run it locally and remove or protect the script afterward.
-5. Visit `http://localhost/spi/`.
+2. For a fresh installation, import `database/drick.sql` in phpMyAdmin. It creates the `drick` database and its tables.
+3. To move an existing installation, first import `database/drick.sql`, then import `database/migrate_spi_to_drick.sql`. This copies data from `spi_grading_system` into `drick`; the old database remains as a backup. The copy script is one-time and must not be run against a populated `drick` database.
+4. If your MySQL root password is not blank, configure the four `SPI_DB_*` environment values for Apache/PHP, or update `config/database.php` for local development. The default database is `drick`. Never use a privileged root account in production.
+5. For a fresh installation, create the first administrator from a terminal in this folder with `php database/create-admin.php`. Migrated installations keep their existing administrator. Use a unique 12+ character password; the script reads it from standard input.
+6. Visit `http://localhost/spi/`.
 
-For an existing installation, apply `database/migrations/001_subject_grading_components.sql` and `database/migrations/002_seed_requested_strands.sql` in phpMyAdmin to add subject weight settings and the HUMSS, ICT, ABM, STEM, and HE strand/track choices.
+For an existing installation, apply `database/migrations/001_subject_grading_components.sql`, `database/migrations/002_seed_requested_strands.sql`, `database/migrations/003_password_reset_pin.sql`, `database/migrations/20261019_student_profile_details.sql`, and `database/migrations/20261020_student_profile_inputs.sql` to the old database before copying it if those features were not already installed. The data-copy script assumes the current project schema, including student profile detail fields.
 
 ## Workflow
 
@@ -20,7 +21,7 @@ For an existing installation, apply `database/migrations/001_subject_grading_com
 - Manage the subject catalog and Performance Tasks, Written Works, and Quarterly Assessment weights together in **Subjects**. Weights are configurable and capped at 100% total; the current gradebook still stores one teacher-entered grade and does not calculate component scores.
 - Teachers can access only their assigned classes in **My classes**, save grade drafts, and submit grades for review.
 - Administrators review submitted grade rows in **Grade review**, then approve, finalize, and release. Students can see only rows linked to their verified student record with status `released`.
-- Forgot-password mail uses PHP `mail()`. Configure a local mail transport in XAMPP/PHP for usable delivery. The response does not disclose whether an account exists; reset tokens are stored hashed and expire after one hour.
+- Forgot-password messages use the bundled PHPMailer SMTP client. For a local XAMPP setup, fill in the placeholders in `config/mail.local.php`; that file is ignored by Git. Alternatively, configure `SPI_SMTP_HOST`, `SPI_SMTP_PORT`, `SPI_SMTP_USERNAME`, `SPI_SMTP_PASSWORD`, `SPI_SMTP_ENCRYPTION` (`tls`, `ssl`, or `none`), `SPI_MAIL_FROM`, and optionally `SPI_MAIL_FROM_NAME` in the Apache environment. Reset PINs are stored salted and hashed, expire after one hour, allow five attempts, and can be requested once every 30 minutes. The user must verify the PIN before the new-password fields appear; the verified session expires after ten minutes. The response does not disclose whether an account exists.
 
 ## Relationship sketch
 
